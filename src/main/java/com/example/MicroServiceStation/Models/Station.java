@@ -1,9 +1,7 @@
 package com.example.MicroServiceStation.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.MicroServiceStation.DTO.BikeDTO;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,5 +17,7 @@ public class Station {
     private Long id;
     private String name;
     private String location;
+
+    private Long bikeId;
 
 }
