@@ -68,7 +68,7 @@ public class StationService {
 
 
     public void deleteStation(Long id) {
-            stationRepository.deleteById(id);
+        stationRepository.deleteById(id);
     }
 
 

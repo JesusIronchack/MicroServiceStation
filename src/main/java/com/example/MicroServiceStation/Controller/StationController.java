@@ -18,9 +18,16 @@ public class StationController {
     private StationService stationService;
 
     @PostMapping
-    public Station createStation(@RequestBody Station station) {
-        return stationService.createStation(station);
+    public ResponseEntity<?> createStation(@RequestBody Station station) {
+        try {
+            Station newStation = stationService.createStation(station);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newStation);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponseDTO("Error creating station: " + e.getMessage()));
+        }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getStationById(@PathVariable Long id) {
@@ -38,7 +45,7 @@ public class StationController {
         try {
             return ResponseEntity.ok(stationService.getAllStations());
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)//500
                     .body(new MessageResponseDTO("Error retrieving stations"));
         }
     }
@@ -49,7 +56,7 @@ public class StationController {
         try{
             return ResponseEntity.ok(stationService.updateStation(id, station));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)//400
                     .body(new MessageResponseDTO("Error updating station with ID: " + id));
         }
     }
@@ -66,7 +73,7 @@ public class StationController {
         try {
             return ResponseEntity.ok(stationService.assignBikeToStation(stationId, bikeId));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)//400
                     .body(new MessageResponseDTO("Error assigning bike ID " + bikeId + " to station ID " + stationId));
         }
     }
