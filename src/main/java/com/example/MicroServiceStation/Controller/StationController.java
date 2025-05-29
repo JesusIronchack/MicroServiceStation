@@ -46,7 +46,7 @@ public class StationController {
             return ResponseEntity.ok(stationService.getAllStations());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)//500
-                    .body(new MessageResponseDTO("Error retrieving stations"));
+                    .body(new MessageResponseDTO("Error displaying stations"));
         }
     }
 

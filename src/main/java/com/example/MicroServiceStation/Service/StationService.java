@@ -24,8 +24,16 @@ public class StationService {
     public StationDTO getStationById(Long id) {
         Station station = stationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Station not found with ID: " + id));
-        List<BikeDTO> bikes = bikeClient.getBikesByStation(id);
-        return new StationDTO(station.getId(), station.getName(), station.getLocation(), bikes);
+        List<BikeDTO> bikeDTO = null;
+        try {
+            if (station.getBikeId() != null) {
+                bikeDTO = bikeClient.getBikesByStation(station.getBikeId());
+            }
+
+        } catch (FeignException e) {
+            System.out.println("Warning: Bike service is unavailable.");
+        }
+        return new StationDTO(station.getId(), station.getName(), station.getLocation(), bikeDTO);
     }
 
 
@@ -33,14 +41,16 @@ public class StationService {
         try {
             List<Station> stations = stationRepository.findAll();
             return stations.stream().map(station -> {
-                StationDTO stationDTO = new StationDTO(station.getId(), station.getName(), station.getLocation());
-
-                if (station.getBikeId() != null) {
-                    List<BikeDTO> bike = bikeClient.getBikesByStation(station.getId());
-                    stationDTO.setBike(bike);
+               List<BikeDTO> bikeDTo = null;
+                try{
+                    if (station.getBikeId() != null) {
+                        bikeDTo = bikeClient.getBikesByStation(station.getBikeId());
+                    }
+                }catch (FeignException e) {
+                    System.out.println("Warning: Bike service is unavailable.");
                 }
 
-                return stationDTO;
+                return  new StationDTO(station.getId(), station.getName(), station.getLocation(), bikeDTo);
             }).collect(Collectors.toList());
         } catch (RuntimeException e) {
             throw new RuntimeException("No stations Found: " + e.getMessage());
