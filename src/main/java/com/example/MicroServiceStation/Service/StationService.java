@@ -25,14 +25,10 @@ public class StationService {
         Station station = stationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Station not found with ID: " + id));
         List<BikeDTO> bikeDTO = null;
-        try {
             if (station.getBikeId() != null) {
-                bikeDTO = bikeClient.getBikesByStation(station.getBikeId());
+                bikeDTO = bikeClient.getBikesByStation(station.getId());
             }
 
-        } catch (FeignException e) {
-            System.out.println("Warning: Bike service is unavailable.");
-        }
         return new StationDTO(station.getId(), station.getName(), station.getLocation(), bikeDTO);
     }
 
@@ -43,8 +39,8 @@ public class StationService {
             return stations.stream().map(station -> {
                List<BikeDTO> bikeDTo = null;
                 try{
-                    if (station.getBikeId() != null) {
-                        bikeDTo = bikeClient.getBikesByStation(station.getBikeId());
+                    if (station.getId() != null) {
+                        bikeDTo = bikeClient.getBikesByStation(station.getId());
                     }
                 }catch (FeignException e) {
                     System.out.println("Warning: Bike service is unavailable.");
